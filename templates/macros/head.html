@@ -101,7 +101,7 @@
 {% endif %}
 
 {% if config.extra.plausible %}
-<script src="https://plausible.io/js/script.js" data-domain="{{ config.base_url }}" async defer></script>
+<script src="https://plausible.io/js/script.js" data-domain="{{ config.base_url | safe }}" async defer></script>
 {% endif %}
 
 {% if config.extra.unpoly %}
