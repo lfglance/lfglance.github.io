@@ -1,0 +1,71 @@
+{% extends "page.html" %}
+
+{% block body %}
+  {% set page_class = "docs single" %}
+{% endblock body %}
+
+{% block header %}
+  {# This value is matched by the config.extra.menu.main~url #}
+  {% set current_section = "docs" %}
+  {{ macros_header::header(current_section=current_section)}}
+{% endblock header %}
+
+{% block content %}
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row flex-xl-nowrap">
+	  {{ macros_sidebar::docs_sidebar(current_section=current_section) }}
+	  {{ macros_toc::docs_toc(page=page) }}
+      <main class="docs-content col-lg-11 col-xl-9">
+        <h1>{{ page.title }}</h1>
+        {% if page.extra.lead %}<p class="lead">{{ page.extra.lead | safe }}</p>{% endif %}
+        {{ page.content | safe }}
+        {% if config.extra.edit_page %}
+          {{ macros_edit_page::docs_edit_page(current_path=current_path) }}
+        {% endif %}
+        {% set u = page.ancestors | last %}
+        {% set section = get_section(path=u) %}
+
+        {% set top = get_section(path=page.ancestors[0]) %}
+        {% set docs = get_section(path=top.subsections[0]) %}
+        
+        {#
+        <div class="docs-navigation d-flex justify-content-between">
+          <!-- if first path in section.pages, get last section's last path -->
+          {% if page.path == section.pages[0].path %}
+            {% for i in docs.subsections %}
+              {% if i == section.relative_path %}{% break %}{% endif %}
+              <a href="{{ i }}">
+                <div class="card my-1">
+                  <div class="card-body py-2">
+                    &larr; {{ i }}
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          {% endif %}
+          
+          <!-- <a href="#">
+            <div class="card my-1">
+              <div class="card-body py-2">
+                &larr; Title
+              </div>
+            </div>
+          </a>
+          <a href="#">
+            <div class="card my-1">
+              <div class="card-body py-2">
+                Title &rarr;
+              </div>
+            </div>
+          </a> -->
+
+        </div>
+        #}
+        
+          
+      </main>
+    </div>
+  </div>
+</div>
+{% endblock content %}
