@@ -2,7 +2,6 @@
 
 Are you tired of being an unproductive scrub getting unnoticed in your career? Do you want to help your organization scale out the sickest platforms and tools and take credit for it?<br /><br /> This course will help you skill up to be a 10x full-stack site reliability/sysops/secops/devops/infraops/dataops/noops/platform engineer
 
-
 Areas this course will cover:
 
 * Backend software development
