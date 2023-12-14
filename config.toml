@@ -23,8 +23,13 @@ timezone = "UTC"
 edit_page = false
 docs_repo = "https://github.com/lfglance/lfglance.github.io"
 repo_branch = "main"
-plausible = true
-unpoly = false
+
+[extra.unpoly]
+enabled = false
+
+[extra.plausible]
+enabled = true
+domain = "fs10xer.dev"
 
 [extra.open]
 enable = true
