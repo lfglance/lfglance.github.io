@@ -1,5 +1,5 @@
 # The URL the site will be built for
-base_url = "https://lfglance.github.io"
+base_url = "https://fs10xer.dev"
 theme = "adidoks"
 title = "fs10xer"
 description = "fs10xer is an online course to become the very best (engineer) like no one ever was. To train you is my cause."
@@ -24,7 +24,7 @@ edit_page = false
 docs_repo = "https://github.com/lfglance/lfglance.github.io"
 repo_branch = "main"
 plausible = true
-unpoly = true
+unpoly = false
 
 [extra.open]
 enable = true
