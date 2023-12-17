@@ -74,6 +74,10 @@ Same as above, you're never done. Software and infrastructure will constantly ev
 
 Don't boil the ocean and try to fix every possible edge case or nice to have. Start small and work your way out.
 
+## Stick To Twelve-Factor
+
+[The Twelve-Factor App](https://12factor.net/) is a methodology for creating apps and services that are cloud native, portable, and streamlined. You should read it and keep it in mind for any software development you do.
+
 ## You Should Write Tests
 
 Tests are a pain in the ass but will ensure you're writing code that conforms to certain conditions and that bugs will be detected before being shipped. Test purists will define tests first and then do their implementation but test along the way ensuring conformity; this is called test-driven development.
