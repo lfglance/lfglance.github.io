@@ -16,6 +16,8 @@ top = false
 
 For this example we are going to use a web service framework called [Quart](https://github.com/pallets/quart). It is essentially async [Flask](https://flask.palletsprojects.com/), one of the most popular Python based frameworks besides Django.
 
+Make sure you've installed the relevant software required to do this. It is explained in the [Introduction](../introduction#installing-build-software) page.
+
 ## Why Python?!
 
 A lot of software developers dislike Python because it is not statically typed and fairly "loose" with standards; it's considered a "normie" language. However, it's fairly simple and great for normies like me to wrap their brains around a lot of these concepts.
