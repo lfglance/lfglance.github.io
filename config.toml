@@ -33,7 +33,7 @@ domain = "fs10xer.dev"
 
 [extra.open]
 enable = true
-image = "logo-doks.png"
+image = "images/10xer_mascot.png"
 twitter_site = "lfglance"
 twitter_creator = "lfglance"
 facebook_author = "lfglance"
