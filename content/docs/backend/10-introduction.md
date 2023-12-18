@@ -82,23 +82,6 @@ Don't boil the ocean and try to fix every possible edge case or nice to have. St
 
 Tests are a pain in the ass but will ensure you're writing code that conforms to certain conditions and that bugs will be detected before being shipped. Test purists will define tests first and then do their implementation but test along the way ensuring conformity; this is called test-driven development.
 
-## Installing Build Software
-
-Whatever programming language you are working with you will need the core software installed. Most languages will need the binaries (compiled software) to be installed to your machine and available in your terminal's `$PATH`. For example:
-* [Golang](https://go.dev/doc/install)
-* [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
-* [Rust](https://www.rust-lang.org/tools/install)
-* [Java](https://www.java.com/en/download/help/linux_x64_install.html)
-* [Python](https://www.python.org/downloads/)
-* [PHP](https://www.php.net/manual/en/install.php)
-
-We're using Python for this course so you need to install Python from the above link. I'm using `3.10.12` (Ubuntu 22 default, pre-installed). MacOS also comes with `python3` out of the box but you have to run `xcode-select --install` first. After you've installed `python3` to your system, double-check it's available in your `$PATH` like so:
-
-```bash
-python3 -V
-> Python 3.10.12
-```
-
 ## Use Virtual Environments
 
 It's very common for developers to have multiple versions of the programming languages installed to their machine so they can test different software and check legacy compatibility.

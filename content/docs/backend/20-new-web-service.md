@@ -9,18 +9,35 @@ template = "docs/page.html"
 slug = "new-web-service"
 
 [extra]
-lead = 'yo.'
+lead = "Let's make a simple web app."
 toc = true
 top = false
 +++
 
 For this example we are going to use a web service framework called [Quart](https://github.com/pallets/quart). It is essentially async [Flask](https://flask.palletsprojects.com/), one of the most popular Python based frameworks besides Django.
 
-Make sure you've installed the relevant software required to do this. It is explained in the [Introduction](../introduction#installing-build-software) page.
-
 ## Why Python?!
 
 A lot of software developers dislike Python because it is not statically typed and fairly "loose" with standards; it's considered a "normie" language. However, it's fairly simple and great for normies like me to wrap their brains around a lot of these concepts.
+
+## Installing
+
+Whatever programming language you are working with you will need the core software installed. Most languages will need the binaries (compiled software) to be installed to your machine and available in your terminal's `$PATH`. For example:
+* [Golang](https://go.dev/doc/install)
+* [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+* [Rust](https://www.rust-lang.org/tools/install)
+* [Java](https://www.java.com/en/download/help/linux_x64_install.html)
+* [Python](https://www.python.org/downloads/)
+* [PHP](https://www.php.net/manual/en/install.php)
+
+Since we're using Python for this course so you need to install Python from the above link. I'm using `3.10.12` (Ubuntu 22 default, pre-installed). MacOS also comes with `python3` out of the box but you have to run `xcode-select --install` first. After you've installed `python3` to your system, double-check it's available in your `$PATH` like so:
+
+```bash
+python3 -V
+> Python 3.10.12
+```
+
+Anything `Python 3.*` should be fine. Let me know if it's not.
 
 ## The Setup
 
@@ -29,7 +46,7 @@ I could have you clone something but it's better if you do it from scratch so yo
 Create a new directory in your terminal (use BASH - /bin/bash):
 
 ```bash
-mkdir ~/fs10xer  && cd ~/fs10xer
+mkdir ~/fs10xer && cd ~/fs10xer
 ```
 
 Initialize the directory as a new Git repository and set a .gitignore to not track junk files (I'll explain later):
@@ -67,8 +84,34 @@ Collecting markupsafe
 
 You might notice not just Quart being installed but several other libraries. This is because Quart has it's own list of libraries it requires. Your libraries have libraries and you need all of them locally to develop.
 
-You may also notice that I had you install a very specific version of Quart (`0.19.4`). When developing applications you will want to ensure you are noting the versions of libraries in use to avoid dependency issues when others are developing on their own systems.
+## Saving dependencies
 
+You may notice that I had you install a very specific version of Quart (`0.19.4`). When developing applications you will want to ensure you are noting the versions of libraries in use to avoid dependency issues when others are developing on their own systems.
+
+For Python, the way we do that is using `pip` again:
+
+```bash
+pip freeze | tee requirements.txt
+```
+
+The `freeze` argument will print all of the installed libraries in your current virtual environment. `| tee requirements.txt` will store that output into a file and print it so you can see all the libraries.
+
+## Committing Changes
+
+So far we will have created the following:
+
+* `.venv` - folder for our virtual environment settings and libraries
+* `requirements.txt` - file containing our installed libraries and versions
+* `.gitignore` - file containing things we do not want stored in Git
+
+Git is fairly complex, but don't worry, you can keep it simple. Run the following:
+
+```bash
+git add -A  # stages all files (-A) for committing
+git commit -m "adding initial repo items"  # creates a commit with given info message
+```
+
+These git commands basically make point in time snapshot of the state of this project repo. Later on we'll actually push it to a Git provider like Github to store it. Right now it's fine to just keep locally.
 
 ## Hello World 
 
@@ -115,6 +158,14 @@ Open a web browser and navigate to http://127.0.0.1:5000 to see your web page an
 
 ![](/hello_world.png)
 
+## Commit That
+
+Run the Git commands again to "save" this point in time snapshot.
+
+```bash
+git add app.py && git commit -m "adding hello world app"
+```
+
 ## Extending
 
 The app so far is basic as hell. It has one route "/" and returns a simple string. No HTML, CSS, Javascript, APIs, etc.
@@ -146,6 +197,24 @@ Finally, in our `return` statement we use a formatted string to inject the `name
 Run `quart run` again, except this time navigate in your browser to [http://127.0.0.1:5000/?name=10xer](http://127.0.0.1:5000/?name=10xer)
 
 You'll see "Hello 10xer" on the page. Try changing the name to other things and refresh the page.
+
+## Commit That
+
+```bash
+git add app.py && git commit -m "extend app query strings"
+```
+
+## See Your Commit History
+
+If you've run the Git commands along the way you'll be able to see your past commits and thus will be able to roll back into any point in time. Run:
+
+```bash
+git log
+```
+
+If you wanted to rollback, there are several ways to go about it, but a common one would be to run `git checkout $COMMIT_HASH` where $COMMIT_HASH is the long string you see next to your commits. Here's the commit log for this project's repo:
+
+![](/git_log_example.png)
 
 ---
 
