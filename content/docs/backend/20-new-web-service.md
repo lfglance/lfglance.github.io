@@ -204,6 +204,49 @@ You'll see "Hello 10xer" on the page. Try changing the name to other things and 
 git add app.py && git commit -m "extend app query strings"
 ```
 
+## Passing Configuration Data
+
+All applications will require some amount of data....the username/password to your database, API tokens to talk to other services, URL endpoints, ports, secrets, etc. 
+
+It used to be these values were defined in a file. However, this proved to be a poor way to handle things as apps needed more scalability and started running in ephemeral cloud environments (see twelve-factor app). The most common way to do this is through the use of environment variables though another popular method is fetching secrets from some sort of vault or password store (AWS Secrets Manager, Hashicorp Vault). Let's modify our app to use a simple environment variable:
+
+```python
+from os import getenv
+
+from quart import Quart, request
+
+def create_app():
+    app = Quart(__name__)
+
+    if getenv('CUSTOMVAR'):
+        print('found CUSTOMVAR: {}'.format(getenv('CUSTOMVAR')))
+
+    @app.route('/')
+    def hello():
+        req = request.args.get('name', 'World')
+        return 'Hello {}'.format(req)
+
+    return app
+
+run = create_app().run()
+```
+
+We import the `getenv` from the `os` library which comes standard in Python. `getenv` will read a given environment variable name and return `None` if it doesn't exist. Here we put a simple `if` statement to print a message to the terminal if the variable is passed. Now if you run `quart` with the `CUSTOMVAR` env:
+
+```bash
+CUSTOMVAR=thequickbrownfoxjumpedoverthelazydog quart run
+```
+
+You will see the text printed out:
+
+`found CUSTOMVAR: thequickbrownfoxjumpedoverthelazydog`
+
+## Commit That
+
+```bash
+git add app.py && git commit -m "add environment variable fetching"
+```
+
 ## See Your Commit History
 
 If you've run the Git commands along the way you'll be able to see your past commits and thus will be able to roll back into any point in time. Run:
@@ -219,5 +262,7 @@ If you wanted to rollback, there are several ways to go about it, but a common o
 ---
 
 We will cover server side rendering in greater detail in a future section as we have more data available to insert into pages and start using HTML templates.
+
+We will also start using Git with an existing project instead of writing out all these files since it will be cleaner/simpler.
 
 At this time you'll have a basic blueprint for the app and we will start morphing from a simple hello world into something more useful.
