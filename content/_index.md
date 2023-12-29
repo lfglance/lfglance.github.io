@@ -18,6 +18,12 @@ url = "/about"
 weight = 10
 
 [[extra.menu.main]]
+name = "Blog"
+section = "blog"
+url = "/blog"
+weight = 15
+
+[[extra.menu.main]]
 name = "Course"
 section = "docs"
 url = "/docs"
