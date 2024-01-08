@@ -1,8 +1,8 @@
 +++
 title = "3D Printing Stupid Shit: Pt. 1"
 description = "I turn my laziness into productiveness by 3d printing something I could have gone to the store for and saved 99.8% in costs."
-date = 2021-05-01T09:19:42+00:00
-updated = 2021-05-01T09:19:42+00:00
+date = 2023-12-29T09:19:42+00:00
+updated = 2023-12-29T09:19:42+00:00
 draft = false
 template = "blog/page.html"
 slug = "printing stupid shit pt 1"
