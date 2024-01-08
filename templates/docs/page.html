@@ -1,5 +1,7 @@
 {% extends "page.html" %}
 
+{% import 'macros/show-comments.html' as macros_comments -%}
+
 {% block body %}
   {% set page_class = "docs single" %}
 {% endblock body %}
@@ -62,6 +64,10 @@
 
         </div>
         #}
+
+        {% if config.extra.comments %}
+          {{ macros_comments::show_comments() }}
+        {% endif %}
         
           
       </main>

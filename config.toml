@@ -31,6 +31,12 @@ enabled = false
 enabled = true
 domain = "fs10xer.dev"
 
+[extra.comments]
+enabled = true
+base_domain = "comments.fs10xer.dev"
+http_proto = "https"
+ws_proto = "wss"
+
 [extra.open]
 enable = true
 image = "images/10xer_mascot.png"
