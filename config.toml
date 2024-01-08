@@ -28,7 +28,7 @@ repo_branch = "main"
 enabled = false
 
 [extra.plausible]
-enabled = false
+enabled = true
 domain = "fs10xer.dev"
 
 [extra.comments]
