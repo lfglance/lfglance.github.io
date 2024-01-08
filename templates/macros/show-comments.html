@@ -28,7 +28,8 @@
 <script type="text/javascript">
     const upstream = '{{ config.extra.comments.base_domain }}';
     const url = window.location.href.split('?')[0].split('#')[0];
-    const ws = new WebSocket(`ws://${upstream}/api/v1/ws`);
+    const replayURL = `{{ config.extra.comments.http_proto }}://${upstream}/api/v1/replay?url=${url}`;
+    const ws = new WebSocket(`{{ config.extra.comments.ws_proto }}://${upstream}/api/v1/ws`);
 
     function addComment(data) {
         let date;
@@ -88,7 +89,7 @@
     }
 
     ws.onopen = function() {
-        fetch(`http://${upstream}/api/v1/replay?url=${url}`)
+        fetch(replayURL)
             .then((response) => response.json())
             .then((data) => {
                 for(i = 0; i < data.length; i++) {
