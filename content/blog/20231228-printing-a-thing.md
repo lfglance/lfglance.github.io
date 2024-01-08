@@ -44,9 +44,13 @@ vs
 
 $$ costprinting = {(spoolcost/spoolamount) * gramsused * hooksprinted} $$
 
-#### If I were to drive ~4 miles to purchase hooks it would cost me ~$4.33.
+<p style="font-size: 2em;">
+If I were to drive ~4 miles to purchase hooks it would cost me ~$4.33.
+</p>
+<p style="font-size: 2em;">
+If I were to 3d print hooks it would cost me ~$0.72, plus I don't have to go anywhere or get dressed.
+</p>
 
-#### If I were to 3d print hooks it would cost me ~$0.72, _plus_ I don't have to go anywhere or get dressed.
 
 The choice is clear.
 
