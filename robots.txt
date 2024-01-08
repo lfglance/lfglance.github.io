@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fs10xer.dev/sitemap.xml
