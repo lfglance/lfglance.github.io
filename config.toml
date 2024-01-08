@@ -28,8 +28,12 @@ repo_branch = "main"
 enabled = false
 
 [extra.plausible]
-enabled = true
+enabled = false
 domain = "fs10xer.dev"
+
+[extra.comments]
+enabled = true
+base_domain = "127.0.0.1"
 
 [extra.open]
 enable = true
