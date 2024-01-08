@@ -33,7 +33,7 @@ domain = "fs10xer.dev"
 
 [extra.comments]
 enabled = true
-base_domain = "127.0.0.1"
+base_domain = "127.0.0.1:5000"
 
 [extra.open]
 enable = true

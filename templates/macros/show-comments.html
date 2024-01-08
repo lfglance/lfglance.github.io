@@ -1,57 +1,115 @@
 {% macro show_comments() %}
-
-
-
-<div style="display: flex; flex-direction: column">
-    <ul id="comments" style="flex-grow: 1; list-style-type: none"></ul>
-    <form onsubmit="return send(event)">
-        name<input type="text" name="name" minlength="1" />
-        comment<input type="text" name="message" minlength="1" />
-        <button type="submit">Send</button>
-    </form>
-  </div>
+<div id="commentsSection">
+    <h1 id="comments">Comments</h1>
+    <p id="eventMessage"></p>
+    <div id="commentsData">
+        <form onsubmit="return send(event)">
+            <div class="form-group" style="width: 50%;">
+                <label for="name">Name</label>
+                <input type="text" name="name" minlength="1" placeholder="john doe"  class="form-control" style="color: #3d3d3d;"/>
+            </div>
+            <div class="form-group" style="padding-top: 8px;">
+                <label for="message">Message</label>
+                <textarea name="message" placeholder="sick post..." class="form-control" style="color: #3d3d3d;"></textarea>
+            </div>
+            <div class="form-group" style="padding-top: 12px;">
+                <button type="submit" class="btn btn-secondary" class="form-control">Submit</button>
+            </div>
+        </form>
+        <div style="display: flex; flex-direction: column; margin-top: 2em;">
+            <ul id="commentsLeft" style="flex-grow: 1; list-style-type: none"></ul>
+        </div>
+        <div id="showConnectedClients" style="position: fixed; bottom: 0; right: 0; padding: 12px;">
+            <span id="connectedClients"></span>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     const upstream = '{{ config.extra.comments.base_domain }}';
     const url = window.location.href.split('?')[0].split('#')[0];
     const ws = new WebSocket(`ws://${upstream}/api/v1/ws`);
-  
-    fetch(`http://${upstream}/api/v1/replay?url=${url}`)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data)
-            for(i = 0; i < data.length; i++) {
-                console.log(data[i])
-                const li = document.createElement("li");
-                li.appendChild(document.createTextNode(data[i].message));
-                document.getElementById("comments").appendChild(li);
-            }
-        })
-  
-    ws.addEventListener('message', function (event) {
-        console.log(`received: ${event}`)
-        const li = document.createElement("li");
-        li.appendChild(document.createTextNode(event.data));
-        document.getElementById("comments").appendChild(li);
-    });
-  
-    function send(event) {
-        const form = new FormData(event.target);
-        const message = form.get("message");
-        const name = form.get("name");
-        const data = JSON.stringify({
-            "message": message,
-            "name": name,
-            "url": url
-        });
-        console.log(`sent: ${data}`);
-        if (message) {
-            ws.send(data);
+
+    function addComment(data) {
+        let date;
+        if (data.datestamp) {
+            date = new Date(data.datestamp);
+        } else {
+            date = new Date();
         }
-        event.target.reset();
-        return false;
+        document.getElementById('commentsLeft').insertAdjacentHTML('afterbegin', `
+            <li style="border-bottom: 1px dashed #e9ecef; padding-top: 8px;">
+                <span>
+                    <strong>${data.name}</strong>
+                    <span style="font-size: 10px">${date.toLocaleString()}</span>
+                </span>
+                <span>
+                    <p>${data.message}</p>
+                </span>
+            </li>
+        `);
+    }
+
+    function updateEvent(msg, success) {
+        const em = document.getElementById('eventMessage');
+        em.innerHTML = msg;
+        if (success) {
+            em.style['color'] = 'green';
+        } else {
+            em.style['color'] = 'red';
+        }
+    }
+
+    function send(event) {
+        event.preventDefault();
+        const form = new FormData(event.target);
+        const message = form.get('message');
+        const name = form.get('name');
+        if (!name) updateEvent('Please leave your name', false);
+        if (!message) updateEvent('Please leave your message', false);
+        if (name && message) {
+            const data = JSON.stringify({
+                'message': message,
+                'name': name,
+                'url': url
+            });
+            if (message) {
+                ws.send(data);
+            }
+            updateEvent('Sent!', true);
+            event.target.reset();
+            return false;
+        }
+    }
+
+    ws.onerror = function() {
+        document.getElementById('commentsData').style['display'] = 'none';
+        updateEvent('Comments service unavailable.', false);
+    }
+
+    ws.onopen = function() {
+        fetch(`http://${upstream}/api/v1/replay?url=${url}`)
+            .then((response) => response.json())
+            .then((data) => {
+                for(i = 0; i < data.length; i++) {
+                    addComment(data[i]);
+                }
+            });
+
+        ws.addEventListener('message', function (event) {
+            const data = JSON.parse(event.data);
+            if (data.connected_clients) {
+                const cc = document.getElementById('connectedClients');
+                if (data.connected_clients == 1) {
+                    cc.innerHTML = `${data.connected_clients} person reading the site`;
+                } else {
+                    cc.innerHTML = `${data.connected_clients} people reading the site`;
+                }
+            }
+            if (data.message) {
+                addComment(data);
+            }
+        });
     }
 </script>
-  
-
 {% endmacro %}

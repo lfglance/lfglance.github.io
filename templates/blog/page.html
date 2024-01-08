@@ -34,7 +34,7 @@
           {% if page.extra.lead %}<p class="lead">{{ page.extra.lead | safe }}</p>{% endif %}
           {{ page.content | safe }}
         </article>
-        {% if page.extra.comments %}
+        {% if config.extra.comments %}
           {{ macros_comments::show_comments() }}
         {% endif %}
       </div>
