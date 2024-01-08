@@ -33,7 +33,9 @@ domain = "fs10xer.dev"
 
 [extra.comments]
 enabled = true
-base_domain = "127.0.0.1:5000"
+base_domain = "comments.fs10xer.dev"
+http_proto = "https"
+ws_proto = "wss"
 
 [extra.open]
 enable = true
