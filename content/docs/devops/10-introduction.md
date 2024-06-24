@@ -64,7 +64,16 @@ The reality of cloud based systems is that everything has become an API. You don
 
 ## Infrastructure and System Operations (InfraOps, TechOps, SysOps, etc)
 
+Ops teams are responsible for maintaining the health of the systems, keeping it operational, and up to date on patches. They are the first line of defense for incidents and outages and are the sysadmins and hustlers that are in the trenches every day with the systems they support and familiar with all of it's quirks.
 
+I generally see this role as a "jack of all trades" that will dovetail into other roles as they level up.
 
 ## Security Operations (SecOps)
 
+SecOps folks are responsible for maintaining the security of the systems, ensuring compliance, and staying up to date on security threats.
+
+They typically maintain their own set of systems which provide the security monitoring and operations they use to observe. 
+
+---
+
+The rest of this chapter will delve into each of these areas to explore the concepts further and provide real-world implementations and tricks of the trade.
