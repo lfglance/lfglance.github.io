@@ -148,6 +148,31 @@ run = create_app().run()
 
 Run `quart run` now to start the app and you will see `data.sqlite` as a new file after that.
 
+With this `peewee` framework we can interact with the database in our Python code. Here is an example with the `quart shell`:
+
+```bash
+quart shell
+```
+
+This is an interactive Python prompt with the application context and models available.
+
+```python
+from models import Workout
+
+# save a record
+workout = Workout(
+    pullups=10,
+    pushups=20,
+    details="Quick set in-between phone calls"
+)
+workout.save()
+
+# query records
+workouts = Workout.select()
+for workout in workouts:
+    print(f"Workout {workout.id} - {workout.pullups} pullups, {workout.pushups}, {workout.details}")
+```
+
 ---
 
 Now we have an empty database with schema populated, models defined, and our ORM dialed in. We can start capturing data to populate the database. We will start making updates to our business logic and accepting data from users in the next chapter.

@@ -3,7 +3,7 @@ title = "Server-Side Rendering"
 description = "Getting content to a web browser."
 date = 2024-02-11T11:40:00+00:00
 draft = false
-weight = 50
+weight = 25
 sort_by = "weight"
 template = "docs/page.html"
 slug = "server-side-rendering"
@@ -114,7 +114,7 @@ You'll often hear this called "business logic". It's the underlying code that de
 * what IP address is their request from?
 * what URL parameters did they provide?
 * what is their browser's user-agent header?
-* what headers have they specified?
+* what other headers have they specified?
 * have they setup a profile and other required fields yet?
 * etc
 
