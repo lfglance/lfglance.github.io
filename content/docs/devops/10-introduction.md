@@ -70,9 +70,15 @@ I generally see this role as a "jack of all trades" that will dovetail into othe
 
 ## Security Operations (SecOps)
 
-SecOps folks are responsible for maintaining the security of the systems, ensuring compliance, and staying up to date on security threats.
+SecOps folks are responsible for maintaining the security of the systems, ensuring compliance, and staying up to date on security threats. There's a bit of overlap with DevOps in that they are using the same infrastructure-as-code tools, changes via pipelines, automation, scripting, etc.
 
 They typically maintain their own set of systems which provide the security monitoring and operations they use to observe. 
+
+They are running Security Incident Event Management (SIEM) systems, collecting and analyzing security log data sets, writing detection and alerting rules, and overall keeping on top of the security of the organization.
+
+## Other Important Stuff
+
+In case you haven't read it, I think the [backend introduction](/backend/introduction) which has concepts which are equally applicable to the roles here.
 
 ---
 
