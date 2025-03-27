@@ -4,7 +4,7 @@ description = "I turn my laziness into productiveness by 3d printing something I
 date = 2023-12-29T09:19:42+00:00
 updated = 2023-12-29T09:19:42+00:00
 draft = false
-template = "blog/page.html"
+template = "page.html"
 slug = "printing stupid shit pt 1"
 
 [extra]
@@ -82,4 +82,4 @@ The printer has been flashed with [Klipper](https://www.klipper3d.org/) to give 
 
 It took me about 4 hours to print all the hooks. This is the end result. It's not my Mona Lisa but I think it's pretty sick.
 
-<img src="/images/20231228-finished_hooks.jpg" width="100%"> 
+<img src="/images/20231228-finished_hooks.jpg" width="100%">

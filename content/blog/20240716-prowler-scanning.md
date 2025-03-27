@@ -4,7 +4,7 @@ description = "Open source security scanning on AWS with automation and dashboar
 date = 2024-07-16T11:00:00+00:00
 updated = 2024-07-16T11:00:00+00:00
 draft = false
-template = "blog/page.html"
+template = "page.html"
 slug = "prowler-scanning-automation"
 
 [extra]
@@ -26,10 +26,10 @@ The open source version has support for a dashboard. You run the scan and then r
 
 <img src="/images/20240716-dashboard.png" width="100%" />
 
-**However**, this doesn't suit my needs and I have some problems with it. 
+**However**, this doesn't suit my needs and I have some problems with it.
 
-1. It runs as a web service which means I can't share an artifact; the customer will need to access a URL to review the data. 
-2. I don't want to run a long-term instance for each customer and I definitely don't want to make this publicly accessible; it contains sensitive data and potential vulnerabilities in AWS accounts. 
+1. It runs as a web service which means I can't share an artifact; the customer will need to access a URL to review the data.
+2. I don't want to run a long-term instance for each customer and I definitely don't want to make this publicly accessible; it contains sensitive data and potential vulnerabilities in AWS accounts.
 3. There's no authentication and I don't want to build that.
 4. It's built for an administrator who wants to view security posture over time presumably as they remediate findings. I need an interface for one-off scans and have no intention of capturing all findings for different customers in one place; this can't differentiate between different organizations.
 
@@ -38,9 +38,9 @@ I opted to instead build my own dashboard using <a href="https://react.dev/" tar
 
 ## Solution - Backend
 
-I implemented a Python based <a href="https://github.com/lfglance/prowler-scanner" target="_blank">CDK stack</a> which sets up the below infrastructure in my AWS account. 
+I implemented a Python based <a href="https://github.com/lfglance/prowler-scanner" target="_blank">CDK stack</a> which sets up the below infrastructure in my AWS account.
 
-It's fairly straightforward. When the stack is up, I have a script to generate a Cloudformation template which contains cross-account permissions for the IAM role deployed in the stack. That template is distributed to other AWS accounts you want to scan. 
+It's fairly straightforward. When the stack is up, I have a script to generate a Cloudformation template which contains cross-account permissions for the IAM role deployed in the stack. That template is distributed to other AWS accounts you want to scan.
 
 Those stacks will have outputs such as `role_arn` (the role to assume), `external_id` (a random string defined by whoever launches the stack - avoids the confused deputy problem), and `scan_name` (a helpful identifier for resulting files and logs). This is the architecture on AWS.
 
@@ -123,7 +123,7 @@ For all of the above reasons I decide to just use an EC2 instance which is way m
 
 In my Lambda function which launches the instance I wrote a user data shell script which runs when the instance launches. It executes the whole workflow from top to bottom. The end result is the artifact on S3 with a presigned URL posted to my Slack channel with a ping.
 
-The IAM Role it attaches also has permission to terminate EC2 instances that have a tag which I assign to the EC2 instances that launch. This allows the instance to terminate itself. The final step in the workflow is to terminate itself to clean up. 
+The IAM Role it attaches also has permission to terminate EC2 instances that have a tag which I assign to the EC2 instances that launch. This allows the instance to terminate itself. The final step in the workflow is to terminate itself to clean up.
 
 The code for this can be found <a href="https://github.com/lfglance/prowler-scanner/blob/main/functions/worker.py#L52" target="_blank">here</a>.
 
