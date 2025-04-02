@@ -5,9 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{% block description %}{{ section.description | default(value=config.description) }}{% endblock description %}">
     <title>{% block title %}{{ config.title }}{% endblock title %}</title>
-    {% block extra_head %}
+    <meta name="keywords" content="tech, aws, programming, ai, 3d printing, life">
+    <meta name="author" content="Lance Allen">
+    <meta name="robots" content="index, follow">
     <link rel="stylesheet" href="{{ get_url(path='style.css', cachebust=true) }}">
-    {% endblock extra_head %}
+
+    {%- if page.extra.image -%}
+    <meta property="og:title" content="{{ page.title | safe }}">
+    <meta property="og:description" content="{{ page.description | safe }}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ config.base_url | safe }}/{{ page.slug | safe }}">
+    <meta property="og:image" content="{{ config.base_url | safe }}/{{ page.extra.image | safe }}">
+    <meta property="og:image:alt" content="{{ page.description | safe }}">
+    <meta property="og:site_name" content="{{ page.title | safe }}">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page.title | safe }}">
+    <meta name="twitter:description" content="{{ page.description | safe }}">
+    <meta name="twitter:image" content="{{ config.base_url | safe }}/{{ page.extra.image | safe }}">
+    <meta name="twitter:site" content="@{{ config.extra.twitter }}">
+    <meta name="twitter:creator" content="@{{ config.extra.twitter }}">
+    <link rel="canonical" href="{{ config.base_url | safe }}/{{ page.slug | safe }}">
+    {% endif %}
+
     {% block feed_link %}
         {% if config.generate_feeds %}
             {% if config.feed_filenames %}

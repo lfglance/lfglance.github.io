@@ -11,7 +11,7 @@ slug = "printing stupid shit pt 1"
 lead = ""
 math = true
 toc = true
-images = ["/images/20231228-cad.png"]
+images = "/images/20231228-cad.png"
 +++
 
 I often need something mundane and either creative or vigorous to do as an outlet; drawing, chopping wood, doing yardwork, hitting a punching bag, etc. Lately this has been 3d printing objects that serve some purpose around the house. My _pièce de résistance_ is a part that fixes a drawer in the kitchen due to a bent rail.

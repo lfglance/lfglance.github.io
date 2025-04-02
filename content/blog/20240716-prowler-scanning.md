@@ -11,7 +11,7 @@ slug = "prowler-scanning-automation"
 lead = ""
 math = true
 toc = true
-images = ["/images/20240716-prowler.png"]
+image = "/images/20240716-prowler.png"
 +++
 
 I run a lot of <a href="https://github.com/prowler-cloud/prowler" target="_blank">Prowler</a> scans (open source security scanner script) for work when I'm meeting with new customers who want to get a sense of their AWS security. Most companies struggle with tightening up their cloud security posture, for good reason, because it's incredibly complex and requires full-time attention. Larger organizations can afford a team of security personnel to do this, but smaller ones have to wear that hat in addition to sysops, software dev, devops, etc.

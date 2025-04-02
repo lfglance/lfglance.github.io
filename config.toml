@@ -3,7 +3,7 @@ base_url = "https://lfglance.dev"
 theme = "hook"
 title = "Lance does tech stuff"
 description = "this is my personal site for shits and giggles."
-compile_sass = false
+compile_sass = true
 build_search_index = true
 
 [markdown]
