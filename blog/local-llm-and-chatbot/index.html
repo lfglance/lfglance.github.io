@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Run open source large language models and chatbots on your own hardware.">
+    <title>Lance does tech stuff | Setting Up A Local LLM and Chatbot</title>
+    <meta name="keywords" content="tech, aws, programming, ai, 3d printing, life">
+    <meta name="author" content="Lance Allen">
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="https://lfglance.dev/style.css?h=e3fc45289ce162a3a896">
+
+    <meta property="og:title" content="Setting Up A Local LLM and Chatbot">
+    <meta property="og:description" content="Run open source large language models and chatbots on your own hardware.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://lfglance.dev/local-llm-and-chatbot">
+    <meta property="og:image" content="https://lfglance.dev//images/20240825-llama.jpg">
+    <meta property="og:image:alt" content="Run open source large language models and chatbots on your own hardware.">
+    <meta property="og:site_name" content="Setting Up A Local LLM and Chatbot">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Setting Up A Local LLM and Chatbot">
+    <meta name="twitter:description" content="Run open source large language models and chatbots on your own hardware.">
+    <meta name="twitter:image" content="https://lfglance.dev/images/20240825-llama.jpg">
+    <meta name="twitter:site" content="@lfglance">
+    <meta name="twitter:creator" content="@lfglance">
+    <link rel="canonical" href="https://lfglance.dev/local-llm-and-chatbot">
+    
+
+    
+        
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="https:&#x2F;&#x2F;lfglance.dev/blog">&LeftArrow; Blog</a>
+</header>
+
+    
+<main>
+    <h1>Setting Up A Local LLM and Chatbot</h1>
+    
+    <p class="secondary small">
+        25 August, 2024
+
+        
+        
+        
+
+        
+    </p>
+    
+    <div class="space"></div>
+    <p>I decided to give <a href="https://chatgpt.com">ChatGPT</a> a try a few months ago and it was very impressive. It felt as amazing as my first time searching on Google. In fact, it became my replacement for Google. Any time I needed to look something up I would just ask ChatGPT and it would summarize an answer for me. I no longer needed to scrape web pages and documentation to read and interpret someone else's text. In fact, the more specific I prompted ChatGPT the better answer it would return. I could also tell it how to respond to me.</p>
+<p>I used it to mostly write code which I would copy and paste to my editor, it helped me figure out which bait and lures to use for fishing at the pier (caught some fish btw), and even helped me articulate something to use for a proposal for work.</p>
+<p>I was alright using ChatGPT, but I am a nerd at heart and I like using open source things. ChatGPT is free, which means they get to scoop up all my data for their own purposes which I don't care for. I knew it was possible to run something locally but didn't really bother to spend the time figuring it out. Well, I took the time and now I'm writing about how I set it up here.</p>
+<h2 id="ollama">Ollama</h2>
+<h3 id="installation">Installation</h3>
+<p>One of the go-to tool is <a href="https://ollama.com">Ollama</a>. You install it to your system and will have a daemon running with a CLI tool available. I am running Ubuntu which the installer sets up a <code>systemd</code> service. It can also just be run with <code>ollama serve</code>. It needs to be running to perform any of the below operations.</p>
+<p>The CLI is pretty straightforward: <img src="/images/20240825-ollama.png" alt="" /></p>
+<h3 id="downloading-a-model">Downloading a Model</h3>
+<p>Ollama hosts several models which you can download using the CLI tool or API. You can explore them here: <a href="https://ollama.com/models">Ollama Models</a>. I so far have just used <code>llama3.1</code>, a new one from Meta. The larger the number of tokens of the model you download the more training data it has, more knowledge, but you'll need more performant hardware. Download a model:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">ollama</span><span> pull llama3.1
+</span></code></pre>
+<p>The model will be stored on your system. You can check it's info by running</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">ollama</span><span> show llama3.1
+</span></code></pre>
+<p><img src="/images/20240825-ollama-show.png" alt="" /></p>
+<h3 id="running-models-via-cli">Running Models via CLI</h3>
+<p>Once you have a model downloaded you can run it to start actually interacting with it. The <code>ollama run</code> command will open up an interactive prompt which you can begin typing into like you would ChatGPT. I said hello.</p>
+<p><img src="/images/20240825-ollama-run.png" alt="" /></p>
+<h3 id="running-a-web-frontend">Running A Web Frontend</h3>
+<p>The CLI is cool, but the real power is the API which ollama serves which you can make HTTP requests to send prompts and receive prompts. There are a ton of open source tools which have been built which make use of it. The most common are web frontends to give you a similar experience to ChatGPT. One of the most popular ones is <a href="https://openwebui.com">OpenWebUI</a>. It has a lot of features but I found one I liked better because it's simpler: <a href="https://github.com/fmaclen/hollama">hollama</a></p>
+<p>Many of the services offer Docker containers but I prefer to build them on my own. hollama is a TypeScript/Svelte web service, so you will need NodeJS/npm to install it. I prefer to use <a href="https://bun.sh">Bun</a> because it is way faster than npm, comes with it's own Node engine, and is a much simpler install. Clone hollama, build it's dependencies, and run it.</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#65737e;"># install Bun at https://bun.sh
+</span><span style="color:#bf616a;">mkdir -p ~</span><span>/mlops/
+</span><span style="color:#96b5b4;">cd </span><span style="color:#bf616a;">~</span><span>/mlops
+</span><span style="color:#bf616a;">git</span><span> clone https://github.com/fmaclen/hollama
+</span><span style="color:#96b5b4;">cd</span><span> hollama
+</span><span style="color:#bf616a;">bun</span><span> run build
+</span><span style="color:#bf616a;">bun</span><span> run vite preview
+</span></code></pre>
+<p><img src="/images/20240825-hollama-vite.png" alt="" /></p>
+<p>Access the web service at <a href="https://localhost:4173">https://localhost:4173</a>.</p>
+<p>Assuming <code>ollama</code> service is running and your hollama build went okay, you should be seeing the hollama web interface.</p>
+<img src="/images/20240825-hollama-main.png" />
+<h3 id="setting-up-prompts">Setting Up Prompts</h3>
+<p>This is my favorite part. You have a model which was trained on a large data set and it has it's own generic, default prompt. However, you can supply your own prompt to tailor the model's responses to your needs. I made one called &quot;grugbot&quot; which responds like a caveman and ends every sentence with &quot;grug&quot;. It's not helpful but it is funny. This is a more useful one I use for generating code.</p>
+<img src="/images/20240825-hollama-knowledge.png" />
+<p>The prompt text is:</p>
+<blockquote>
+<p>you are a large language model which specializes in advanced level programming. you are precise in your speech and speak as few words as possible. when given programming questions you are to only return the code as requested from the user. try to be helpful as possible to your user who is still learning concepts.</p>
+</blockquote>
+<p>I like this prompt because ChatGPT tends to be very verbose and either repeats code with slight variations and explains everything. I just want the code and I can interpret it myself and ask questions if I need to. With this prompt you can now start a new chat session and start asking it some questions.</p>
+<p>Here I asked it for a bubble sort function in C. It looks alright on first glance, but I'm not a C programmer.</p>
+<img src="/images/20240825-hollama-session.png" />
+<h3 id="running-models-via-api">Running Models via API</h3>
+<p>You can build your own tools and scripts which interact with your running instance of ollama. It is available on port 11434 by default and has a <a href="https://github.com/ollama/ollama/blob/main/docs/api.md">well-documented API</a>. You can send HTTP <code>GET</code> requests and get a response programmatically to incorporate the outputs in any way you need. Some people use this for IDE plugins which can generate code right into your editor.</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">curl</span><span> http://localhost:11434/api/generate</span><span style="color:#bf616a;"> -d </span><span>&#39;</span><span style="color:#a3be8c;">{
+</span><span style="color:#a3be8c;">  &quot;model&quot;: &quot;llama3.1&quot;,
+</span><span style="color:#a3be8c;">  &quot;prompt&quot;: &quot;Why is the sky blue?&quot;,
+</span><span style="color:#a3be8c;">  &quot;stream&quot;: false
+</span><span style="color:#a3be8c;">}</span><span>&#39;
+</span></code></pre>
+<p>I am working on a program which can create an entire repo of infrastructure-as-code templates (Terraform/OpenTofu) by just describing the architecture.</p>
+<h2 id="proof-of-concept">Proof of Concept</h2>
+<p>I am running on a shitty little ThinkPad laptop with spotty internet and cell service so my performance will be abysmal, but let's try something.</p>
+<p>Update: nevermind, it's way too slow (5-10 minutes per response, simple-moderate complexity of questions/requests). I'll update this when I get back to my main computer at with home a powerful GPU and better internet connection.</p>
+
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="https://lfglance.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="https://lfglance.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+</body>
+</html>
