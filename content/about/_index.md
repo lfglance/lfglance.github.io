@@ -6,7 +6,7 @@ updated = 2021-05-01T08:00:00+00:00
 sort_by = "weight"
 weight = 1
 ztemplate = "docs/section.html"
-template = "section.html"
+template = "index.html"
 +++
 
 My name is Lance Allen, I've been working in the tech industry for about 10 years and have been tinkering with technology my whole life.
