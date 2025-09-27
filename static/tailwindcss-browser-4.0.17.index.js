@@ -708,9 +708,9 @@ input:where([type='button'], [type='reset'], [type='submit']),
   --container-2xs: 18rem;
   --container-xs: 20rem;
   --container-sm: 24rem;
-  --container-md: 28rem;
-  --container-lg: 32rem;
-  --container-xl: 36rem;
+  --container-md: 32rem;
+  --container-lg: 34rem;
+  --container-xl: 38rem;
   --container-2xl: 42rem;
   --container-3xl: 48rem;
   --container-4xl: 56rem;
