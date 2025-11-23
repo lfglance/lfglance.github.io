@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        #qrcode {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+    <input type="text" id="text" placeholder="Enter text or URL">
+    <div id="qrcode"></div>
+
+    <script>
+        const textInput = document.getElementById('text');
+        const qrCodeElement = document.getElementById('qrcode');
+        let debounceTimer;
+
+        textInput.addEventListener('input', function() {
+            // Clear previous debounce timer
+            clearTimeout(debounceTimer);
+            
+            // Set a new debounce timer
+            debounceTimer = setTimeout(() => {
+                const text = this.value;
+                
+                // Clear previous QR code
+                qrCodeElement.innerHTML = '';
+                
+                if (text) {
+                    const qr = qrcode(0, 'M');
+                    qr.addData(text);
+                    qr.make();
+                    
+                    const imgTag = qr.createImgTag(5);
+                    qrCodeElement.innerHTML = imgTag;
+                }
+            }, 600);
+        });
+    </script>
+</body>
+</html>
