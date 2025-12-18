@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Blog">
+    <title>Lance does tech stuff</title>
+    <meta name="keywords" content="tech, aws, programming, ai, 3d printing, life">
+    <meta name="author" content="Lance Allen">
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="https://lfglance.dev/style.css?h=e3fc45289ce162a3a896">
+
+    
+
+    
+        
+    
+</head>
+<body>
+    
+    <header class="space">
+        <h1>Lance does tech stuff</h1>
+        
+        
+    </header>
+    
+    
+    
+    
+    <main>
+        
+        <a href="/">Home</a>
+        
+        <h2>All posts</h2>
+        <ul>
+            
+            <li><a href="https:&#x2F;&#x2F;lfglance.dev&#x2F;blog&#x2F;craps&#x2F;">Craps: An Engineering Marvel?</a></li>
+            
+            <li><a href="https:&#x2F;&#x2F;lfglance.dev&#x2F;blog&#x2F;you-are-overcomplicating-everything&#x2F;">You&#x27;re Overcomplicating Everything</a></li>
+            
+            <li><a href="https:&#x2F;&#x2F;lfglance.dev&#x2F;blog&#x2F;local-llm-and-chatbot&#x2F;">Setting Up A Local LLM and Chatbot</a></li>
+            
+            <li><a href="https:&#x2F;&#x2F;lfglance.dev&#x2F;blog&#x2F;prowler-scanning-automation&#x2F;">Prowler Scanning Automation</a></li>
+            
+            <li><a href="https:&#x2F;&#x2F;lfglance.dev&#x2F;blog&#x2F;printing-stupid-shit-pt-1&#x2F;">3D Printing Stupid Shit: Pt. 1</a></li>
+            
+        </ul>
+        
+    </main>
+    
+    
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="https://lfglance.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="https://lfglance.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+</body>
+</html>

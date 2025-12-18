@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="craps">
+    <title>Lance does tech stuff | Craps: An Engineering Marvel?</title>
+    <meta name="keywords" content="tech, aws, programming, ai, 3d printing, life">
+    <meta name="author" content="Lance Allen">
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="https://lfglance.dev/style.css?h=e3fc45289ce162a3a896">
+
+    
+
+    
+        
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="https:&#x2F;&#x2F;lfglance.dev/blog">&LeftArrow; Blog</a>
+</header>
+
+    
+<main>
+    <h1>Craps: An Engineering Marvel?</h1>
+    
+    <p class="secondary small">
+        22 September, 2025
+
+        
+        
+        
+
+        
+    </p>
+    
+    <div class="space"></div>
+    <p>Vegas season is almost upon us in the AWS ecosystem where a lot of partners and customers attend Re:Invent. It's a pretty overwhelming and chaotic event but has lots of great networking and team bonding opportunities. I'm always happy to take prospects, customers, and partners to some killer (albeit overpriced) dinners.</p>
+<p>One of my favorite things to do is gamble. I'm not a huge gambler, but I dabble. You probably won't find me at the poker tables in Vegas because while I do play, I prefer friendly home games with friends and smaller venues. I'm not a poker shark and will probably lose my lunch money at those tables.</p>
+<p>My favorite game is craps! Super fun dice game; you can play it simple or jump around bets all over the table with various levels of risk (house always wins though). The past few months I've been working on a side project of building a craps web app which ended up being a fun and challenging project. I personally find it to be the coolest thing I've built yet because of the subtle but impactful engineering choices. In this post I'll talk about the features I love and the implementation along with some code samples and architecture patterns.</p>
+<p>If you want to play it is (hopefully) online at <a href="https://craps.lfglance.dev" target=_blank>https://craps.lfglance.dev</a></p>
+<video controls width="100%" poster="/images/craps-dogdice.png" style="object-fit: initial;">
+    <source src="https://cdn.lfglance.dev/craps_lesson.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+<h2 id="the-board">The Board</h2>
+<p>I needed an interactive board where different areas could be highlighted and chips would rest on them. Trying to make a static image and use Javascript to overlay on the DOM seemed like a nightmare so I opted to use SVG. I created a board from scratch with <a href="https://inkscape.org/" target=_blank>Inkscape</a>.</p>
+<p><img src="/images/craps-inkscape.png" alt="" /></p>
+<p>Within Inkscape I can set the properties of the various shapes and pieces, including the ID or class name. Since SVG can be loaded directly into the HTML I am able to target the different pieces with CSS and Javascript to enable hover styles and click events.</p>
+<p><img src="/images/craps-svg.png" alt="" /></p>
+<h2 id="the-betting">The Betting</h2>
+<p>The betting mechanics are fairly straightforward; the different squares on the board have different odds. A 7:6 odds bet wins you $7 for every $6 you bet; a $100 bet with 7:6 odds wins you ~$116.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">determine_payout</span><span>(</span><span style="color:#bf616a;">amount</span><span>: int, </span><span style="color:#bf616a;">ratio</span><span>: str) -&gt; int:
+</span><span>    </span><span style="color:#65737e;">&quot;&quot;&quot;
+</span><span style="color:#65737e;">    Simple math to get the payout for a given amount and ratio - rounds down.
+</span><span style="color:#65737e;">    &quot;&quot;&quot;
+</span><span>    a, b = </span><span style="color:#96b5b4;">map</span><span>(int, ratio.</span><span style="color:#bf616a;">split</span><span>(&quot;</span><span style="color:#a3be8c;">:</span><span>&quot;))
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">int</span><span>(amount * (a / b))
+</span></code></pre>
+<p>I have a class with all of the available bets, their odds, and friendly names.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Bets</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">Enum</span><span style="color:#eff1f5;">):
+</span><span>    </span><span style="color:#bf616a;">TIP </span><span>= (&quot;</span><span style="color:#a3be8c;">1:1</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">Tip</span><span>&quot;)
+</span><span>    </span><span style="color:#bf616a;">PASS_LINE </span><span>= (&quot;</span><span style="color:#a3be8c;">1:1</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">Pass Line</span><span>&quot;)
+</span><span>    </span><span style="color:#bf616a;">PASS_LINE_ODDS_6 </span><span>= (&quot;</span><span style="color:#a3be8c;">6:5</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">Pass Line Odds (6, 8)</span><span>&quot;)
+</span><span>    </span><span style="color:#bf616a;">PASS_LINE_ODDS_8 </span><span>= (&quot;</span><span style="color:#a3be8c;">6:5</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">Pass Line Odds (6, 8)</span><span>&quot;)
+</span><span>    </span><span style="color:#bf616a;">PASS_LINE_ODDS_5 </span><span>= (&quot;</span><span style="color:#a3be8c;">3:2</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">Pass Line Odds (5, 9)</span><span>&quot;)
+</span><span>    </span><span style="color:#d08770;">...
+</span><span>    </span><span style="color:#bf616a;">PROP_12 </span><span>= (&quot;</span><span style="color:#a3be8c;">30:1</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">Boxcars</span><span>&quot;)
+</span></code></pre>
+<p>One thing that became tedious was the sheer amount of &quot;bet&quot; objects that were created when a user is placing bets. If they lay down a stack of 10 $1 chips, that's 10 individual bets. Instead of resolving them individually I decided to implement a &quot;roll-up&quot; function to sum all of the chips on a given bet, which simplifies payouts:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">consolidate_active_bets</span><span>(</span><span style="color:#bf616a;">self</span><span>):
+</span><span>        </span><span style="color:#65737e;">&quot;&quot;&quot;
+</span><span style="color:#65737e;">        Go through all active bets in db and
+</span><span style="color:#65737e;">        roll up the amounts into a summary bet
+</span><span style="color:#65737e;">        for each individual user and bet.
+</span><span style="color:#65737e;">        &quot;&quot;&quot;
+</span><span>        consolidated = db.session.</span><span style="color:#bf616a;">query</span><span>(
+</span><span>            Bet.user_id,
+</span><span>            Bet.bet,
+</span><span>            func.</span><span style="color:#bf616a;">count</span><span>(Bet.bet).</span><span style="color:#bf616a;">label</span><span>(&quot;</span><span style="color:#a3be8c;">unique</span><span>&quot;),
+</span><span>            func.</span><span style="color:#bf616a;">sum</span><span>(Bet.amount).</span><span style="color:#bf616a;">label</span><span>(&quot;</span><span style="color:#a3be8c;">total_amount</span><span>&quot;)
+</span><span>        ).</span><span style="color:#bf616a;">filter</span><span>(
+</span><span>            Bet.active == </span><span style="color:#d08770;">True
+</span><span>        ).</span><span style="color:#bf616a;">group_by</span><span>(
+</span><span>            Bet.user_id,
+</span><span>            Bet.bet
+</span><span>        )
+</span><span>        </span><span style="color:#b48ead;">for </span><span>bet </span><span style="color:#b48ead;">in </span><span>consolidated:
+</span><span>            </span><span style="color:#b48ead;">if </span><span>bet.unique &gt; </span><span style="color:#d08770;">1</span><span>:
+</span><span>                existing = Bet.query.</span><span style="color:#bf616a;">filter</span><span>(
+</span><span>                    Bet.active == </span><span style="color:#d08770;">True</span><span>,
+</span><span>                    Bet.user_id == bet.user_id,
+</span><span>                    Bet.bet == bet.bet
+</span><span>                ).</span><span style="color:#bf616a;">all</span><span>()
+</span><span>                </span><span style="color:#b48ead;">for </span><span>b </span><span style="color:#b48ead;">in </span><span>existing:
+</span><span>                    db.session.</span><span style="color:#bf616a;">delete</span><span>(b)
+</span><span>                    db.session.</span><span style="color:#bf616a;">commit</span><span>()
+</span><span>                b = </span><span style="color:#bf616a;">Bet</span><span>(
+</span><span>                    </span><span style="color:#bf616a;">user_id</span><span>=bet.user_id,
+</span><span>                    </span><span style="color:#bf616a;">bet</span><span>=bet.bet,
+</span><span>                    </span><span style="color:#bf616a;">amount</span><span>=bet.total_amount
+</span><span>                )
+</span><span>                db.session.</span><span style="color:#bf616a;">add</span><span>(b)
+</span><span>                db.session.</span><span style="color:#bf616a;">commit</span><span>()
+</span></code></pre>
+<p>The pace of the game is carefully controlled by the backend process which communicates with all players via websockets and can control when bets are placed and reject invalid/illegal bets.</p>
+<h2 id="the-chips">The Chips</h2>
+<p>The chips were also made in Inkscape but combined into a single image and served as <a href="https://www.w3schools.com/css/css_image_sprites.asp">CSS image sprites</a>. When a div has a specific class it simply renders that chip on the page.</p>
+<p><img src="/images/craps-sprite.png" alt="" /></p>
+<p>Chip placement on the SVG is fairly simple. Some Javascript state tracks which chip increment is currently selected, sets up click events on the board sections, and identifies the offsets in the DOM where the chips will be shown. Some neat tricks help with the overall UX when dropping chips.</p>
+<p>There is an initial chip placement which randomly places it in the clicked area to give it the feel of a messy board with chips flying around. The click event when the chip is laid down also sends a websocket message to the backend which stores the bets.</p>
+<pre data-lang="javascript" style="background-color:#2b303b;color:#c0c5ce;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#b48ead;">const </span><span style="color:#bf616a;">placeOffset </span><span>= </span><span style="color:#8fa1b3;">$</span><span>(`</span><span style="color:#a3be8c;">#${</span><span style="color:#bf616a;">data</span><span style="color:#a3be8c;">.</span><span style="color:#bf616a;">bet</span><span style="color:#a3be8c;">}_USER_PLACEMENT</span><span>`).</span><span style="color:#8fa1b3;">offset</span><span>()
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">el </span><span>= </span><span style="color:#8fa1b3;">$</span><span>(`</span><span style="color:#a3be8c;">&lt;div class=&quot;sprite activeBets&quot; id=&quot;${</span><span style="color:#bf616a;">selectedChip</span><span style="color:#a3be8c;">}&quot;&gt;&lt;/div&gt;</span><span>`);
+</span><span style="color:#bf616a;">el</span><span>.</span><span style="color:#8fa1b3;">css</span><span>({
+</span><span>    left: </span><span style="color:#bf616a;">placeOffset</span><span>.left + (Math.</span><span style="color:#96b5b4;">random</span><span>() * </span><span style="color:#d08770;">20</span><span>) + &#39;</span><span style="color:#a3be8c;">px</span><span>&#39;,
+</span><span>    top: </span><span style="color:#bf616a;">placeOffset</span><span>.top + (Math.</span><span style="color:#96b5b4;">random</span><span>() * </span><span style="color:#d08770;">20</span><span>) + &#39;</span><span style="color:#a3be8c;">px</span><span>&#39;,
+</span><span>    position: &#39;</span><span style="color:#a3be8c;">absolute</span><span>&#39;,
+</span><span>    display: &#39;</span><span style="color:#a3be8c;">block</span><span>&#39;,
+</span><span>    width: &#39;</span><span style="color:#a3be8c;">80px</span><span>&#39;,
+</span><span>    transform: &#39;</span><span style="color:#a3be8c;">scale(.5)</span><span>&#39;
+</span><span>})
+</span><span style="color:#bf616a;">el</span><span>.</span><span style="color:#8fa1b3;">appendTo</span><span>(&#39;</span><span style="color:#a3be8c;">body</span><span>&#39;);
+</span></code></pre>
+<p>The backend takes in all the available bets, consolidates them into a one single bet, and for display purposes shows the whole bet broken into biggest chip increments (i.e. 25 $1 bets shows one $25 chip).</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">split_amounts</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">amount</span><span>: int) -&gt; tuple:
+</span><span>    </span><span style="color:#65737e;">&quot;&quot;&quot;
+</span><span style="color:#65737e;">    Take a given integer and split it into smaller
+</span><span style="color:#65737e;">    increments of 1, 5, 10, 25, 50, and 100 with
+</span><span style="color:#65737e;">    a greedy algorithm.
+</span><span style="color:#65737e;">    &quot;&quot;&quot;
+</span><span>    hundreds = amount // </span><span style="color:#d08770;">100
+</span><span>    amount %= </span><span style="color:#d08770;">100
+</span><span>    fifties = amount // </span><span style="color:#d08770;">50
+</span><span>    amount %= </span><span style="color:#d08770;">50
+</span><span>    twentyfives = amount // </span><span style="color:#d08770;">25
+</span><span>    amount %= </span><span style="color:#d08770;">25 </span><span style="color:#65737e;"># Remainder after using 25&#39;s
+</span><span>    tens = amount // </span><span style="color:#d08770;">10
+</span><span>    amount %= </span><span style="color:#d08770;">10  </span><span style="color:#65737e;"># Remainder after using 10&#39;s
+</span><span>    fives = amount // </span><span style="color:#d08770;">5
+</span><span>    amount %= </span><span style="color:#d08770;">5  </span><span style="color:#65737e;"># Remainder after using 5&#39;s
+</span><span>    ones = amount  </span><span style="color:#65737e;"># Remaining amount is all ones
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">int</span><span>(hundreds), </span><span style="color:#bf616a;">int</span><span>(fifties), </span><span style="color:#bf616a;">int</span><span>(twentyfives), </span><span style="color:#bf616a;">int</span><span>(tens), </span><span style="color:#bf616a;">int</span><span>(fives), </span><span style="color:#bf616a;">int</span><span>(ones)
+</span></code></pre>
+<p>Another Javascript function removes all of the user placed chips and takes data from the backend to formally lay down chips where they belong. Some clever CSS offsets give the chips a nice stacked appearance.</p>
+<video controls width="100%" style="object-fit: initial;">
+    <source src="https://cdn.lfglance.dev/craps-chips.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+<h2 id="the-state">The State</h2>
+<p>State is maintained by a backend worker process and involves a combination of relational database and cache (PostgreSQL and Redis).</p>
+<p>A websocket broker manages connected users and relays messages back and forth from client and server. One function handles all of the business logic of how to handle messages and a series of other functions get called to update state; all of the business logic from updating balances, consolidating bets, performing the payout calculations, updating other state like point, tracking losses, etc.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">get_state</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">name</span><span>) -&gt; dict:
+</span><span>    </span><span style="color:#b48ead;">return </span><span>{
+</span><span>        &quot;</span><span style="color:#a3be8c;">point</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_item</span><span>(&quot;</span><span style="color:#a3be8c;">point</span><span>&quot;),
+</span><span>        &quot;</span><span style="color:#a3be8c;">rolling</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_item</span><span>(&quot;</span><span style="color:#a3be8c;">rolling</span><span>&quot;),
+</span><span>        &quot;</span><span style="color:#a3be8c;">betting</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_item</span><span>(&quot;</span><span style="color:#a3be8c;">betting</span><span>&quot;),
+</span><span>        &quot;</span><span style="color:#a3be8c;">time_remaining</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_item</span><span>(&quot;</span><span style="color:#a3be8c;">time_remaining</span><span>&quot;),
+</span><span>        &quot;</span><span style="color:#a3be8c;">balance</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_user_balance</span><span>(name),
+</span><span>        &quot;</span><span style="color:#a3be8c;">bets</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_user_bets</span><span>(name),
+</span><span>        &quot;</span><span style="color:#a3be8c;">last_rolls</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_last_rolls</span><span>(),
+</span><span>        &quot;</span><span style="color:#a3be8c;">last_bets</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_last_bets</span><span>(),
+</span><span>        &quot;</span><span style="color:#a3be8c;">players</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_players</span><span>(),
+</span><span>        &quot;</span><span style="color:#a3be8c;">logs</span><span>&quot;: </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_logs</span><span>()
+</span><span>    }
+</span></code></pre>
+<p>The <code>get_state</code> function retrieves items from cache and is constantly being updated with in-game events. Any activity such as a bet being placed is written to the database atomically and subsequently populated into cache where it can be presented to the user quickly.</p>
+<p>All reads come right from cache for performance and to ease the burden on the database. The state is constantly being relayed to the client so Javascript can update the DOM.</p>
+<p><img src="/images/craps-console.png" alt="" /></p>
+<h2 id="the-dice">The Dice</h2>
+<p>Every bet will be resolved based upon the results of a dice roll. Every roll is it's own database object with a random UUID assigned as a randomness hash to make it deterministic. You can always recreate the given dice pair with that UUID. There are some helper functions used throughout to make checking certain conditions easier. I don't have verifiable randomness implemented but that would be a must if dealing with real money.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Roll</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">db.Model</span><span style="color:#eff1f5;">):
+</span><span>    </span><span style="color:#96b5b4;">id </span><span>= db.</span><span style="color:#bf616a;">Column</span><span>(db.</span><span style="color:#bf616a;">String</span><span>(</span><span style="color:#d08770;">200</span><span>), </span><span style="color:#bf616a;">default</span><span>=gen_uuid, </span><span style="color:#bf616a;">primary_key</span><span>=</span><span style="color:#d08770;">True</span><span>)
+</span><span>    create_date = db.</span><span style="color:#bf616a;">Column</span><span>(db.DateTime, </span><span style="color:#bf616a;">default</span><span>=get_date)
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">dice</span><span>(</span><span style="color:#bf616a;">self</span><span>) -&gt; tuple:
+</span><span>        rn = </span><span style="color:#bf616a;">Random</span><span>(</span><span style="color:#bf616a;">self</span><span>.id)
+</span><span>        d1 = rn.</span><span style="color:#bf616a;">randint</span><span>(</span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">6</span><span>)
+</span><span>        d2 = rn.</span><span style="color:#bf616a;">randint</span><span>(</span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">6</span><span>)
+</span><span>        </span><span style="color:#b48ead;">return </span><span>(d1, d2)
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">as_str</span><span>(</span><span style="color:#bf616a;">self</span><span>) -&gt; str:
+</span><span>        d1, d2 = </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">dice</span><span>()
+</span><span>        </span><span style="color:#b48ead;">return f</span><span>&quot;{d1}</span><span style="color:#a3be8c;">,</span><span>{d2}&quot;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">is_craps</span><span>(</span><span style="color:#bf616a;">self</span><span>) -&gt; bool:
+</span><span>        d1, d2 = </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">dice</span><span>()
+</span><span>        total = d1 + d2
+</span><span>        </span><span style="color:#b48ead;">if </span><span>total == </span><span style="color:#d08770;">2 </span><span>or total == </span><span style="color:#d08770;">3 </span><span>or total == </span><span style="color:#d08770;">12</span><span>:
+</span><span>            </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">True
+</span><span>        </span><span style="color:#b48ead;">else</span><span>:
+</span><span>            </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">False
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">is_natural</span><span>(</span><span style="color:#bf616a;">self</span><span>) -&gt; bool:
+</span><span>        d1, d2 = </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">dice</span><span>()
+</span><span>        total = d1 + d2
+</span><span>        </span><span style="color:#b48ead;">if </span><span>total == </span><span style="color:#d08770;">7 </span><span>or total == </span><span style="color:#d08770;">11</span><span>:
+</span><span>            </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">True
+</span><span>        </span><span style="color:#b48ead;">else</span><span>:
+</span><span>            </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">False
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#96b5b4;">__repr__</span><span>(</span><span style="color:#bf616a;">self</span><span>):
+</span><span>        </span><span style="color:#b48ead;">return f</span><span>&#39;</span><span style="color:#a3be8c;">roll-</span><span>{</span><span style="color:#bf616a;">self</span><span>.id}&#39;
+</span></code></pre>
+<p>The statistics of dice rolls is a pretty easy thing to determine - roll the dice a million times and see how it turns out.</p>
+<p><img src="/images/craps-dicedist.png" alt="" /></p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">rollstats</span><span>():
+</span><span>    totals = []
+</span><span>    </span><span style="color:#b48ead;">for </span><span>i </span><span style="color:#b48ead;">in </span><span style="color:#96b5b4;">range</span><span>(</span><span style="color:#d08770;">1_000_000</span><span>):
+</span><span>        d1, d2 = </span><span style="color:#bf616a;">Roll</span><span>().</span><span style="color:#bf616a;">dice</span><span>()
+</span><span>        totals.</span><span style="color:#bf616a;">append</span><span>(d1 + d2)
+</span><span>    mean = np.</span><span style="color:#bf616a;">mean</span><span>(totals)
+</span><span>    std = np.</span><span style="color:#bf616a;">std</span><span>(totals)
+</span><span>    x = np.</span><span style="color:#bf616a;">linspace</span><span>(</span><span style="color:#96b5b4;">min</span><span>(totals), </span><span style="color:#96b5b4;">max</span><span>(totals), </span><span style="color:#d08770;">100</span><span>)
+</span><span>    pdf = norm.</span><span style="color:#bf616a;">pdf</span><span>(x, mean, std)
+</span><span>    plt.</span><span style="color:#bf616a;">plot</span><span>(x, pdf)
+</span><span>    plt.</span><span style="color:#bf616a;">hist</span><span>(totals, </span><span style="color:#bf616a;">density</span><span>=</span><span style="color:#d08770;">True</span><span>, </span><span style="color:#bf616a;">alpha</span><span>=</span><span style="color:#d08770;">0.6</span><span>, </span><span style="color:#bf616a;">color</span><span>=&quot;</span><span style="color:#a3be8c;">g</span><span>&quot;)
+</span><span>    plt.</span><span style="color:#bf616a;">xlabel</span><span>(&quot;</span><span style="color:#a3be8c;">Value</span><span>&quot;)
+</span><span>    plt.</span><span style="color:#bf616a;">ylabel</span><span>(&quot;</span><span style="color:#a3be8c;">Probability Density</span><span>&quot;)
+</span><span>    plt.</span><span style="color:#bf616a;">title</span><span>(&quot;</span><span style="color:#a3be8c;">Bell Curve of Data</span><span>&quot;)
+</span><span>    plt.</span><span style="color:#bf616a;">show</span><span>()
+</span></code></pre>
+<h2 id="wrap-up">Wrap-Up</h2>
+<p>Super fun project to take on. I decided while on a trip to South Lake Tahoe after spending the evening playings craps and poker that I was going to make a web version of my own just for the challenge. The websockets were a fun implementation and took some careful considerations in the implementation. It's far from perfect and actually has a huge weakness in that websocket connections are held in memory by the backend, which is incompatible with load balancing. I will need to refactor that to use a shared location like cache if I want this to scale, however, I don't think I'll have that problem as it's just a hobby thing that I enjoy playing solo.</p>
+
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="https://lfglance.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="https://lfglance.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+</body>
+</html>

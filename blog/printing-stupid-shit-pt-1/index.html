@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I turn my laziness into productiveness by 3d printing something I could have gone to the store for and saved 99.8% in costs.">
+    <title>Lance does tech stuff | 3D Printing Stupid Shit: Pt. 1</title>
+    <meta name="keywords" content="tech, aws, programming, ai, 3d printing, life">
+    <meta name="author" content="Lance Allen">
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="https://lfglance.dev/style.css?h=e3fc45289ce162a3a896">
+
+    
+
+    
+        
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="https:&#x2F;&#x2F;lfglance.dev/blog">&LeftArrow; Blog</a>
+</header>
+
+    
+<main>
+    <h1>3D Printing Stupid Shit: Pt. 1</h1>
+    
+    <p class="secondary small">
+        29 December, 2023
+
+        
+        
+        
+
+        
+    </p>
+    
+    <div class="space"></div>
+    <p>I often need something mundane and either creative or vigorous to do as an outlet; drawing, chopping wood, doing yardwork, hitting a punching bag, etc. Lately this has been 3d printing objects that serve some purpose around the house. My <em>pièce de résistance</em> is a part that fixes a drawer in the kitchen due to a bent rail.</p>
+<p>I was doing some cleaning in my office and decided it would be nice to have some hooks for these hand grippers I have on my desk.</p>
+<p>I could have gone to the hardware store, but I felt like being lazy, so I did what any lazy person would do....I modeled some hooks in CAD software and 3d printed some instead. It may sound crazy but the math kinda maths.</p>
+<p><video src="https://cdn.lfglance.dev/gripper_holder.mp4" controls poster="/images/20231228-finished_hooks.jpg" width="100%"></video></p>
+<p style="font-size: 12px;">This sick retro 8-bit anime themed song came on the rotation during the making of this video and I decided it's the theme song for this vid.</p>
+<p><a href="https://www.newgrounds.com/audio/listen/952216">audio source</a></p>
+<h2 id="the-math">The Math</h2>
+<ul>
+<li>The closest hardware store is 2 miles away.</li>
+<li>The average price of wall hooks I see on their store is $3 (for a pack of 6).</li>
+<li>My truck gets about ~15 miles to the gallon.</li>
+<li>Gas is ~$5 where I live.</li>
+<li>1 spool of filament is 1kg and cost me $30.</li>
+<li>1 gram is therefore about $0.03.</li>
+<li>1 hook will print about 6 grams of filament.</li>
+</ul>
+<p>$$ costdriving = {((miles/milespergallon) * gasprice) + hookcost} $$</p>
+<p>vs</p>
+<p>$$ costprinting = {(spoolcost/spoolamount) * gramsused * hooksprinted} $$</p>
+<p style="font-size: 2em;">
+If I were to drive ~4 miles to purchase hooks it would cost me ~$4.33.
+</p>
+<p style="font-size: 2em;">
+If I were to 3d print hooks it would cost me ~$0.72, plus I don't have to go anywhere or get dressed.
+</p>
+<p>The choice is clear.</p>
+<h2 id="modeling">Modeling</h2>
+<p>I need basically a simple j-hook and plan to use a drywall screw to fix it to the wall. I need 4 of them.</p>
+<p>I use <a href="https://www.freecad.org/">FreeCAD</a> (FOSS) for modeling. I keep it pretty simple and get most of this info from youtube. A few straight lines with dimensions, padding, some circles with pockets, and that's good for now. Export this as an STL and load it into the slicer.</p>
+<img src="/images/20231228-cad.png" width="100%" />
+<h2 id="slicing">Slicing</h2>
+<p>I use <a href="https://www.prusa3d.com/page/prusaslicer_424/">PrusaSlicer</a> to import the CAD file and prep it for printing. I already have this tuned to my printer's Z-offset, some custom macros, and a brim. I export the g-code and prepare the printer.</p>
+<img src="/images/20231228-slicer.png" width="100%" />
+<h2 id="printing">Printing</h2>
+<p>I have an Ender 5 Pro. It's a good machine for tinkering. It takes a bit to get it dialed in but you can customize it a lot. Once it's dialed you get great prints.</p>
+<img src="/images/20231228-printer.gif" width="40%" />
+<p>The printer has been flashed with <a href="https://www.klipper3d.org/">Klipper</a> to give me some lower level capabilities and higher performance. I'm also using <a href="https://octoprint.org/">OctoPrint</a> running on a Raspberry Pi which controls the printer via USB serial and has a nice web interface for managing things remotely. The printer is 5 feet away from my desk but it is nice to check on prints when doing other stuff. I mainly use this for the timelapse feature which is a lot of fun.</p>
+<img src="/images/20231228-octoprint.png" width="100%">
+<h2 id="results">Results</h2>
+<p>It took me about 4 hours to print all the hooks. This is the end result. It's not my Mona Lisa but I think it's pretty sick.</p>
+<img src="/images/20231228-finished_hooks.jpg" width="100%">
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="https://lfglance.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="https://lfglance.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+</body>
+</html>
