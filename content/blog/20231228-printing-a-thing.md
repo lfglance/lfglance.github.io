@@ -20,7 +20,7 @@ I was doing some cleaning in my office and decided it would be nice to have some
 
 I could have gone to the hardware store, but I felt like being lazy, so I did what any lazy person would do....I modeled some hooks in CAD software and 3d printed some instead. It may sound crazy but the math kinda maths.
 
-<video src="https://cdn.fs10xer.dev/gripper_holder.mp4" controls poster="/images/20231228-finished_hooks.jpg" width="100%"></video>
+<video src="https://cdn.lfglance.dev/gripper_holder.mp4" controls poster="/images/20231228-finished_hooks.jpg" width="100%"></video>
 
 <p style="font-size: 12px;">This sick retro 8-bit anime themed song came on the rotation during the making of this video and I decided it's the theme song for this vid.</p>
 

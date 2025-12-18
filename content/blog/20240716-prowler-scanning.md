@@ -82,7 +82,7 @@ I wanted the output to be very visually appealing with charts and graphs, filter
 This was a fun little project and kept my engineer side happy for a few days.
 
 <video controls autoplay loop muted width="100%">
-    <source src="https://cdn.fs10xer.dev/20240716-interactive.mp4" type="video/mp4" />
+    <source src="https://cdn.lfglance.dev/20240716-interactive.mp4" type="video/mp4" />
 </video>
 
 I know my colors aren't right - severities should be red, orange, and yellow. Will fix.
