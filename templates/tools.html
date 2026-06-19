@@ -26,6 +26,7 @@
     </style>
 </head>
 <body>
+    <div class="tuning-tabs"><a href="/"><button class="">home</button></a></div>
     <h1>QR Code Generator</h1>
     <input type="text" id="text" placeholder="Enter text or URL">
     <div id="qrcode"></div>
@@ -57,5 +58,201 @@
             }, 600);
         });
     </script>
+    <h1>Guitar Tuner</h1>
+    <div class="tuning-tabs" id="tabs"></div>
+    <div class="strings-container" id="strings"></div>
+
+    <script>
+        const tunings = {
+            "Standard (EADGBE)": {
+                folder: "Standard_EADGBE",
+                strings: [
+                    { file: "6_E_Low", note: "E", freq: 82.41, label: "6th" },
+                    { file: "5_A", note: "A", freq: 110.00, label: "5th" },
+                    { file: "4_D", note: "D", freq: 146.83, label: "4th" },
+                    { file: "3_G", note: "G", freq: 196.00, label: "3rd" },
+                    { file: "2_B", note: "B", freq: 246.94, label: "2nd" },
+                    { file: "1_E_High", note: "E", freq: 329.63, label: "1st" },
+                ]
+            },
+            "Drop D": {
+                folder: "Drop_D",
+                strings: [
+                    { file: "6_D_Low", note: "D", freq: 73.42, label: "6th" },
+                    { file: "5_A", note: "A", freq: 110.00, label: "5th" },
+                    { file: "4_D", note: "D", freq: 146.83, label: "4th" },
+                    { file: "3_G", note: "G", freq: 196.00, label: "3rd" },
+                    { file: "2_B", note: "B", freq: 246.94, label: "2nd" },
+                    { file: "1_E_High", note: "E", freq: 329.63, label: "1st" },
+                ]
+            },
+            "Drop C": {
+                folder: "Drop_C",
+                strings: [
+                    { file: "6_C_Low", note: "C", freq: 65.41, label: "6th" },
+                    { file: "5_G", note: "G", freq: 98.00, label: "5th" },
+                    { file: "4_C", note: "C", freq: 130.81, label: "4th" },
+                    { file: "3_F", note: "F", freq: 174.61, label: "3rd" },
+                    { file: "2_A", note: "A", freq: 220.00, label: "2nd" },
+                    { file: "1_D_High", note: "D", freq: 293.66, label: "1st" },
+                ]
+            },
+            "DADGAD": {
+                folder: "DADGAD",
+                strings: [
+                    { file: "6_D_Low", note: "D", freq: 73.42, label: "6th" },
+                    { file: "5_A", note: "A", freq: 110.00, label: "5th" },
+                    { file: "4_D", note: "D", freq: 146.83, label: "4th" },
+                    { file: "3_G", note: "G", freq: 196.00, label: "3rd" },
+                    { file: "2_A", note: "A", freq: 220.00, label: "2nd" },
+                    { file: "1_D_High", note: "D", freq: 293.66, label: "1st" },
+                ]
+            }
+        };
+
+        let currentAudio = null;
+        let currentBtn = null;
+
+        function selectTuning(name) {
+            document.querySelectorAll('.tuning-tabs button').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-tuning="${name}"]`).classList.add('active');
+            renderStrings(tunings[name]);
+        }
+
+        function renderStrings(tuning) {
+            const container = document.getElementById('strings');
+            container.innerHTML = '';
+            tuning.strings.forEach(s => {
+                const btn = document.createElement('div');
+                btn.className = 'string-btn';
+                btn.innerHTML = `
+                    <div>
+                        <div class="string-name">${s.note}</div>
+                        <div class="string-number">${s.label} string</div>
+                    </div>
+                    <div class="string-freq">${s.freq} Hz</div>
+                `;
+                btn.addEventListener('click', () => playString(tuning.folder, s.file, btn));
+                container.appendChild(btn);
+            });
+        }
+
+        function playString(folder, file, btn) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                if (currentBtn) currentBtn.classList.remove('playing');
+            }
+
+            if (currentBtn === btn) {
+                currentBtn = null;
+                currentAudio = null;
+                return;
+            }
+
+            const audio = new Audio(`https://cdn.lfglance.dev/${folder}/${file}.mp3`);
+            audio.play();
+            btn.classList.add('playing');
+            currentAudio = audio;
+            currentBtn = btn;
+
+            audio.addEventListener('ended', () => {
+                btn.classList.remove('playing');
+                currentAudio = null;
+                currentBtn = null;
+            });
+        }
+
+        // Build tabs
+        const tabs = document.getElementById('tabs');
+        Object.keys(tunings).forEach(name => {
+            const btn = document.createElement('button');
+            btn.textContent = name;
+            btn.setAttribute('data-tuning', name);
+            btn.addEventListener('click', () => selectTuning(name));
+            tabs.appendChild(btn);
+        });
+
+        // Default to Standard
+        selectTuning("Standard (EADGBE)");
+    </script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #e94560;
+        }
+        .tuning-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tuning-tabs button {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid #e94560;
+            background: transparent;
+            color: #e94560;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .tuning-tabs button.active,
+        .tuning-tabs button:hover {
+            background: #e94560;
+            color: #fff;
+        }
+        .strings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        .string-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .string-btn:hover {
+            background: #0f3460;
+            transform: scale(1.02);
+        }
+        .string-btn.playing {
+            border-color: #e94560;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.3);
+        }
+        .string-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .string-freq {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        .string-number {
+            font-size: 0.85rem;
+            color: #888;
+        }
+    </style>
 </body>
 </html>
