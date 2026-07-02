@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="https://unpkg.com/@knadh/oat/oat.min.css">
+    <script src="https://unpkg.com/@knadh/oat/oat.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        body { max-width: 900px; margin: 0 auto; }
+        #qrcode { min-height: 60px; display: flex; justify-content: center; align-items: center; margin-top: 1rem; }
+        #qrcode img { image-rendering: pixelated; }
+    </style>
+</head>
+<body>
+    <nav data-topnav>
+        <div class="row">
+            <div class="col-6 branding">
+                <a href="/tools/">&#8592; Tools</a>
+                <strong>QR Code Generator</strong>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <section>
+                <article class="card">
+                    <input type="text" id="text" placeholder="Enter text or URL">
+                    <div id="qrcode"></div>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const textInput = document.getElementById('text');
+        const qrCodeElement = document.getElementById('qrcode');
+        let debounceTimer;
+
+        textInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const text = this.value;
+                qrCodeElement.innerHTML = '';
+                if (text) {
+                    const qr = qrcode(0, 'M');
+                    qr.addData(text);
+                    qr.make();
+                    qrCodeElement.innerHTML = qr.createImgTag(5);
+                }
+            }, 600);
+        });
+    </script>
+</body>
+</html>
