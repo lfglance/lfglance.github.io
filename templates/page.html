@@ -33,6 +33,28 @@
     </p>
     {% endif %}
     <div class="space"></div>
+    {% if page.extra.toc and page.toc %}
+    <nav class="toc">
+        <details open>
+            <summary><strong>Table of Contents</strong></summary>
+            <ul>
+            {% for h1 in page.toc %}
+                <li>
+                    <a href="{{ h1.permalink }}">{{ h1.title }}</a>
+                    {% if h1.children %}
+                    <ul>
+                        {% for h2 in h1.children %}
+                        <li><a href="{{ h2.permalink }}">{{ h2.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        </details>
+    </nav>
+    <div class="space"></div>
+    {% endif %}
     {{ page.content | safe }}
 </main>
 {% endblock content %}
