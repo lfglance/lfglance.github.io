@@ -57,4 +57,30 @@
     {% endif %}
     {{ page.content | safe }}
 </main>
+
+<a href="#top" class="back-to-top" title="Back to top">&UpArrow;</a>
+
+<style>
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    font-size: 1.5rem;
+    text-decoration: none;
+    background: var(--tertiary);
+    color: var(--foreground);
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    z-index: 1000;
+}
+.back-to-top:hover {
+    opacity: 1;
+}
+</style>
 {% endblock content %}
