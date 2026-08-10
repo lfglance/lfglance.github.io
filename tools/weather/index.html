@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishing Weather - Silver Strand Beach</title>
+    <link rel="stylesheet" href="https://unpkg.com/@knadh/oat/oat.min.css">
+    <script src="https://unpkg.com/@knadh/oat/oat.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://analytics.lfglance.dev/js/pa-teJzYBL8UhkzbXc_26Y72.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+
+    <style>
+        body { max-width: 1000px; margin: 0 auto; }
+        section { margin-bottom: 2rem; }
+        .conditions-grid .card,
+        .daily-grid .card { text-align: center; }
+        .conditions-grid .card h3 { margin: 0.25rem 0 0; }
+        .loading { text-align: center; padding: 3rem; }
+    </style>
+</head>
+<body>
+    <nav data-topnav>
+        <div class="row">
+            <div class="col-6 branding">
+                <a href="/tools/">&#8592; Tools</a>
+                <strong>Fishing Weather</strong>
+            </div>
+            <div class="col-6 justify-end hstack">
+                <small class="text-light">Silver Strand Beach, Oxnard, CA</small>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div id="loading" class="loading">
+                <p>Loading weather data...</p>
+                <progress></progress>
+            </div>
+
+            <div id="content" style="display: none;">
+                <section>
+                    <h2>Current Conditions</h2>
+                    <div class="row conditions-grid" id="current-grid"></div>
+                </section>
+
+                <section>
+                    <h2>Temperature (next 3 days)</h2>
+                    <article class="card">
+                        <canvas id="tempChart"></canvas>
+                    </article>
+                </section>
+
+                <section>
+                    <h2>Wind Speed (next 3 days)</h2>
+                    <article class="card">
+                        <canvas id="windChart"></canvas>
+                    </article>
+                </section>
+
+                <section>
+                    <h2>Swell &amp; Wave Height (next 3 days)</h2>
+                    <article class="card">
+                        <canvas id="swellChart"></canvas>
+                    </article>
+                </section>
+
+                <section>
+                    <h2>7-Day Summary</h2>
+                    <div class="row daily-grid" id="daily-grid"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const CDN_BASE = "https://cdn.lfglance.dev/weather";
+
+        async function loadData() {
+            const [weatherResp, marineResp] = await Promise.all([
+                fetch(`${CDN_BASE}/weather.json`),
+                fetch(`${CDN_BASE}/marine.json`),
+            ]);
+            if (!weatherResp.ok || !marineResp.ok) {
+                document.getElementById("loading").innerHTML =
+                    '<p class="text-light">Failed to load weather data.</p>';
+                return;
+            }
+            const weather = await weatherResp.json();
+            const marine = await marineResp.json();
+
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("content").style.display = "block";
+
+            renderCurrent(weather, marine);
+            renderCharts(weather, marine);
+            renderDaily(weather, marine);
+        }
+
+        function degToCompass(deg) {
+            const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+            return dirs[Math.round(deg / 22.5) % 16];
+        }
+
+        function renderCurrent(weather, marine) {
+            const grid = document.getElementById("current-grid");
+            const h = weather.hourly;
+            const m = marine.hourly;
+            const now = new Date();
+            const idx = h.time.findIndex(t => new Date(t) >= now) || 0;
+
+            const items = [
+                { label: "Temperature", value: `${h.temperature_2m[idx]}°F` },
+                { label: "Feels Like", value: `${h.apparent_temperature[idx]}°F` },
+                { label: "Wind", value: `${h.wind_speed_10m[idx]} mph` },
+                { label: "Wind Dir", value: degToCompass(h.wind_direction_10m[idx]) },
+                { label: "Wave Height", value: `${(m.wave_height[idx] * 3.281).toFixed(1)} ft` },
+                { label: "Swell Height", value: `${(m.swell_wave_height[idx] * 3.281).toFixed(1)} ft` },
+                { label: "Swell Period", value: `${m.swell_wave_period[idx]} s` },
+                { label: "Water Temp", value: `${Math.round(m.sea_surface_temperature[idx] * 9/5 + 32)}°F` },
+            ];
+
+            grid.innerHTML = items.map(i =>
+                `<div class="col-3">
+                    <article class="card">
+                        <small class="text-light">${i.label}</small>
+                        <h3>${i.value}</h3>
+                    </article>
+                </div>`
+            ).join("");
+        }
+
+        function renderCharts(weather, marine) {
+            const hours72 = 72;
+            const times = weather.hourly.time.slice(0, hours72);
+            const labels = times.map(t => {
+                const d = new Date(t);
+                return d.toLocaleDateString("en-US", { weekday: "short" }) + " " +
+                       d.toLocaleTimeString("en-US", { hour: "numeric" });
+            });
+
+            const now = new Date();
+            const nowIdx = times.findIndex(t => new Date(t) >= now);
+            const nowAnnotation = {
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            nowLine: {
+                                type: "line",
+                                xMin: nowIdx,
+                                xMax: nowIdx,
+                                borderColor: "rgba(231, 76, 60, 0.8)",
+                                borderWidth: 3,
+                                label: {
+                                    display: true,
+                                    content: "Now",
+                                    position: "start",
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            new Chart(document.getElementById("tempChart"), {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Temperature (°F)",
+                        data: weather.hourly.temperature_2m.slice(0, hours72),
+                        borderColor: "#e74c3c",
+                        tension: 0.3,
+                        fill: false,
+                    }, {
+                        label: "Feels Like (°F)",
+                        data: weather.hourly.apparent_temperature.slice(0, hours72),
+                        borderColor: "#e67e22",
+                        borderDash: [5, 5],
+                        tension: 0.3,
+                        fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { x: { ticks: { maxTicksAutoSkip: true, maxRotation: 45 } } },
+                    ...nowAnnotation
+                }
+            });
+
+            new Chart(document.getElementById("windChart"), {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Wind Speed (mph)",
+                        data: weather.hourly.wind_speed_10m.slice(0, hours72),
+                        borderColor: "#3498db",
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: "rgba(52, 152, 219, 0.1)",
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { x: { ticks: { maxTicksAutoSkip: true, maxRotation: 45 } } },
+                    ...nowAnnotation
+                }
+            });
+
+            new Chart(document.getElementById("swellChart"), {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Wave Height (ft)",
+                        data: marine.hourly.wave_height.slice(0, hours72).map(v => (v * 3.281).toFixed(1)),
+                        borderColor: "#2ecc71",
+                        tension: 0.3,
+                        fill: false,
+                    }, {
+                        label: "Swell Height (ft)",
+                        data: marine.hourly.swell_wave_height.slice(0, hours72).map(v => (v * 3.281).toFixed(1)),
+                        borderColor: "#9b59b6",
+                        tension: 0.3,
+                        fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { x: { ticks: { maxTicksAutoSkip: true, maxRotation: 45 } } },
+                    ...nowAnnotation
+                }
+            });
+        }
+
+        function renderDaily(weather, marine) {
+            const grid = document.getElementById("daily-grid");
+            const d = weather.daily;
+            const md = marine.daily;
+
+            let html = "";
+            for (let i = 0; i < d.time.length; i++) {
+                const date = new Date(d.time[i]);
+                const day = date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+                html += `<div class="col-3">
+                    <article class="card">
+                        <header><h4>${day}</h4></header>
+                        <p>${d.temperature_2m_min[i]}° / ${d.temperature_2m_max[i]}°F</p>
+                        <small class="text-light">Waves: ${(md.wave_height_max[i] * 3.281).toFixed(1)}ft max</small><br>
+                        <small class="text-light">Swell: ${(md.swell_wave_height_max[i] * 3.281).toFixed(1)}ft max</small>
+                    </article>
+                </div>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
