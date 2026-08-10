@@ -19,3 +19,4 @@ title_addition = ""
 timeformat = "%Y-%m-%d %H:%M:%S" # 2021-05-01 09:19:42
 timezone = "UTC"
 edit_page = false
+analytics_enabled = true
